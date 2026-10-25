@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FDR Desk — Deposit Management</title>
+<style>
+:root{--navy:#14233b;--blue:#4263eb;--bg:#f4f7fb;--muted:#718096;--line:#e6ebf2;--green:#18865b;--orange:#b96a13}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:#1b2638}
+.app{display:flex;min-height:100vh}.sidebar{width:225px;background:var(--navy);color:#fff;padding:26px 16px;flex-shrink:0}
+.brand{font-size:21px;font-weight:800;letter-spacing:.3px;padding:0 12px 32px}.brand span{color:#9fb3ff}
+.nav-label{color:#91a0b8;font-size:11px;text-transform:uppercase;letter-spacing:1.4px;padding:0 12px;margin:16px 0 10px}
+.nav{padding:12px;border-radius:10px;margin:4px 0;color:#d6deeb;font-size:14px;display:flex;gap:11px;align-items:center}.nav.active{background:#2b3e60;color:white}.nav .ico{width:18px;text-align:center}
+.side-note{font-size:12px;line-height:1.5;color:#aebbd0;margin:38px 12px 0;border-top:1px solid #35445c;padding-top:18px}
+main{flex:1;min-width:0;padding:28px 34px;max-width:1500px;margin:0 auto;width:100%}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:26px}.eyebrow{font-size:12px;color:var(--muted);margin-bottom:6px}.heading{font-size:26px;font-weight:750;margin:0}.user{display:flex;align-items:center;gap:10px;font-size:13px;color:#536176}.avatar{background:#dfe6ff;color:#314bb5;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800}
+.button{border:0;border-radius:9px;padding:11px 15px;background:var(--blue);color:#fff;font-weight:650;cursor:pointer;font-size:13px}.button.secondary{background:#edf1ff;color:#334fc4}.button.dark{background:#263750}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:19px;box-shadow:0 3px 12px #1a2b4605}.stat-top{display:flex;justify-content:space-between;align-items:center;color:#66758a;font-size:12px}.stat-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#edf1ff;color:#3d58d7;font-size:17px}.stat{font-size:26px;font-weight:800;margin:14px 0 6px;letter-spacing:-.5px}.sub{font-size:11px;color:var(--muted)}.sub strong{color:var(--green)}
+.content-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(270px,.9fr);gap:18px}.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px;margin-bottom:18px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}.panel h2{font-size:16px;margin:0}.small{font-size:12px;color:var(--muted)}.searchrow{display:flex;gap:10px;margin-bottom:14px}.search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline-color:#9caeff}.filter{border:1px solid var(--line);background:white;padding:10px;border-radius:8px;color:#526176}
+.table-wrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}th{text-align:left;color:#77849a;font-weight:600;background:#f9fafc;padding:12px 10px}td{padding:13px 10px;border-bottom:1px solid #edf0f5}tr:last-child td{border-bottom:0}.bank{font-weight:700}.subcell{font-size:11px;color:var(--muted);margin-top:4px}.pill{display:inline-block;padding:5px 8px;border-radius:20px;font-size:10px;font-weight:700}.pill.active{background:#e5f7ef;color:#14764f}.pill.soon{background:#fff1dd;color:#9a5a08}.pill.matured{background:#edf0f5;color:#657186}
+.alert{display:flex;gap:11px;padding:13px 0;border-bottom:1px solid #edf0f5}.alert:last-child{border-bottom:0}.alert-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:#fff1dd;color:#a7650c;flex-shrink:0}.alert-title{font-size:12px;font-weight:700;margin:1px 0 5px}.alert-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.bar-row{display:grid;grid-template-columns:78px 1fr 36px;align-items:center;gap:10px;margin:14px 0;font-size:11px;color:#647187}.bar{height:8px;border-radius:10px;background:#edf1f7;overflow:hidden}.bar i{display:block;height:100%;background:#5b76f0;border-radius:10px}
+.nav[data-view]{cursor:pointer}#view-calculator .calc-panel{margin-top:0}
+footer{text-align:center;color:#8b97a9;font-size:11px;padding:12px}
+.modal-back{display:none;position:fixed;inset:0;background:#111b2d88;align-items:center;justify-content:center;padding:16px;z-index:5}.modal-back.show{display:flex}.modal{width:min(520px,100%);background:#fff;border-radius:16px;padding:24px;max-height:90vh;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal-head h2{margin:0;font-size:19px}.close{border:0;background:#eef1f6;border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;font-weight:650;margin-bottom:7px}.field input,.field select{width:100%;padding:11px;border:1px solid #dce3ed;border-radius:8px;font-size:13px}.field.full{grid-column:1/-1}.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:20px}.toast{position:fixed;bottom:22px;right:22px;background:#14233b;color:white;padding:13px 17px;border-radius:10px;font-size:13px;display:none;z-index:8;box-shadow:0 8px 30px #0002}.toast.show{display:block}
+
+/* Optional, non-intrusive maturity calculator */
+.calc-panel{margin-top:18px}
+.calc-intro{font-size:12px;color:var(--muted);line-height:1.55;margin:8px 0 18px}
+.calc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.calc-field label{display:block;font-size:12px;font-weight:650;margin-bottom:7px}
+.calc-field input,.calc-field select{width:100%;padding:11px;border:1px solid #dce3ed;border-radius:8px;font-size:13px;background:#fff}
+.calc-results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.calc-result{background:#f6f8ff;border:1px solid #e4e9ff;border-radius:11px;padding:15px}
+.calc-result .label{font-size:12px;color:var(--muted)}
+.calc-result .value{font-size:23px;font-weight:800;margin-top:7px;color:#263fba}
+.calc-note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:12px}
+.calc-error{font-size:12px;color:#b42318;margin-top:10px;min-height:16px}
+.calc-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:0;background:transparent;padding:0;text-align:left;cursor:pointer;color:inherit}
+.calc-toggle h2{font-size:16px;margin:0}
+.calc-chevron{font-size:18px;color:var(--muted)}
+.calc-body[hidden]{display:none}
+@media(max-width:800px){.calc-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.calc-grid,.calc-results{grid-template-columns:1fr}.calc-result .value{font-size:21px}}
+
+@media(max-width:1050px){.sidebar{width:190px}.cards{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}}
+@media(max-width:650px){.sidebar{display:none}main{padding:20px 14px}.topbar{align-items:flex-start}.heading{font-size:22px}.user span{display:none}.cards{gap:9px}.card{padding:14px}.stat{font-size:22px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">FDR<span>Desk</span></div>
+  <div class="nav-label">Workspace</div>
+  <div class="nav active" data-view="dashboard"><span class="ico">▦</span> Dashboard</div>
+  <div class="nav" data-view="deposits"><span class="ico">▤</span> All Deposits</div>
+  <div class="nav" data-view="calculator"><span class="ico">◷</span> Maturity Calculator</div>
+  <div class="nav" data-view="reports"><span class="ico">♧</span> Reports</div>
+  <div class="nav-label">Manage</div>
+  <div class="nav" data-view="settings"><span class="ico">⚙</span> Settings</div>
+  <div class="side-note">Prototype preview<br>Sample data only — no real bank information.</div>
+</aside>
+<main>
+  <div class="topbar">
+    <div><div class="eyebrow" id="eyebrow">WORKSPACE / OVERVIEW</div><h1 class="heading" id="pageTitle">Deposit Dashboard</h1></div>
+    <div style="display:flex;align-items:center;gap:14px"><button class="button" id="openModal">＋ Add FDR</button><div class="user"><div class="avatar" id="userAvatar">AD</div><span id="userName">Admin Demo</span></div></div>
+  </div>
+  <div id="view-dashboard" data-view-panel>
+<section class="cards">
+    <div class="card"><div class="stat-top">Total deposits <span class="stat-icon">▤</span></div><div class="stat" id="totalCount">4</div><div class="sub">FDR records in system</div></div>
+    <div class="card"><div class="stat-top">Principal amount <span class="stat-icon">₹</span></div><div class="stat" id="totalAmount">₹12.5L</div><div class="sub">Combined deposit value</div></div>
+    <div class="card"><div class="stat-top">Maturing in 30 days <span class="stat-icon">◷</span></div><div class="stat" id="soonCount">2</div><div class="sub">Review renewal plans</div></div>
+    <div class="card"><div class="stat-top">Matured deposits <span class="stat-icon">✓</span></div><div class="stat" id="maturedCount">1</div><div class="sub">Check closure or renewal</div></div>
+  </section>
+  <div class="content-grid">
+    <div class="panel">
+      <div class="panel-head"><h2>Recent FDR records</h2><span class="small" id="recordLabel">4 records</span></div>
+      <div class="searchrow"><input class="search" id="search" placeholder="Search bank or FDR number…"><select class="filter" id="statusFilter"><option value="all">All status</option><option value="Upcoming">Upcoming</option><option value="Active">Active</option><option value="Matured">Matured</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>BANK / FDR NO.</th><th>PRINCIPAL</th><th>MATURITY DATE</th><th>STATUS</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    </div>
+    <div>
+      <div class="panel"><div class="panel-head"><h2>Maturity reminders</h2><span class="small">Next 30 days</span></div><div id="alerts"></div></div>
+      <div class="panel"><div class="panel-head"><h2>Deposit overview</h2><span class="small">By bank (sample)</span></div>
+        <div class="bar-row"><span>Bank A</span><div class="bar"><i style="width:82%"></i></div><b>₹5.0L</b></div>
+        <div class="bar-row"><span>Bank B</span><div class="bar"><i style="width:58%"></i></div><b>₹3.5L</b></div>
+        <div class="bar-row"><span>Bank C</span><div class="bar"><i style="width:42%"></i></div><b>₹2.5L</b></div>
+        <div class="bar-row"><span>Bank D</span><div class="bar"><i style="width:25%"></i></div><b>₹1.5L</b></div>
+      </div>
+    </div>
+  </div>
+
+  <section class="panel calc-panel" id="maturityCalculator">
+    <button class="calc-toggle" id="calcToggle" type="button" aria-expanded="false" aria-controls="calcBody">
+      <span>
+        <h2>Smart FDR Maturity Calculator <span class="small">(optional)</span></h2>
+        <span class="small">Open only when you need it — it won't interrupt the dashboard.</span>
+      </span>
+      <span class="calc-chevron" id="calcChevron" aria-hidden="true">＋</span>
+    </button>
+    <div class="calc-body" id="calcBody" hidden>
+      <p class="calc-intro">Estimate the maturity value of a deposit using the amount, annual interest rate, tenure, and compounding frequency. This calculator works only when you choose to open it; it never displays pop-ups or interrupts other tasks.</p>
+      <div class="calc-grid">
+        <div class="calc-field"><label for="calcPrincipal">Deposit amount (₹)</label><input id="calcPrincipal" type="number" min="1" step="0.01" placeholder="e.g. 100000" value="100000"></div>
+        <div class="calc-field"><label for="calcRate">Annual interest rate (%)</label><input id="calcRate" type="number" min="0" max="100" step="0.01" placeholder="e.g. 7"></div>
+        <div class="calc-field"><label for="calcYears">Tenure (years)</label><input id="calcYears" type="number" min="0.01" max="50" step="0.01" placeholder="e.g. 2" value="1"></div>
+        <div class="calc-field"><label for="calcFrequency">Compounding frequency</label><select id="calcFrequency"><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4" selected>Quarterly</option><option value="12">Monthly</option></select></div>
+      </div>
+      <div class="calc-results" aria-live="polite">
+        <div class="calc-result"><div class="label">Estimated maturity amount</div><div class="value" id="calcMaturity">Enter a rate to calculate</div></div>
+        <div class="calc-result"><div class="label">Estimated interest earned</div><div class="value" id="calcInterest">—</div></div>
+      </div>
+      <div class="calc-error" id="calcError" role="status"></div>
+      <p class="calc-note">Estimate only, using compound interest: A = P(1 + r/n)^(nt). Actual bank maturity amounts can differ because of bank-specific terms, exact tenure/day-count, tax, payout options, and rounding. Confirm values with the issuing bank before making financial decisions.</p>
+    </div>
+  </section>
+
+  </div>
+
+  <div id="view-deposits" data-view-panel hidden>
+    <div class="panel">
+      <div class="panel-head"><h2>All FDR records</h2><span class="small" id="depCount"></span></div>
+      <div class="searchrow"><input class="search" id="depSearch" placeholder="Search bank or FDR number…"><select class="filter" id="depStatus"><option value="all">All status</option><option value="Upcoming">Upcoming</option><option value="Active">Active</option><option value="Matured">Matured</option></select><select class="filter" id="depSort"><option value="maturity">Sort: Maturity date</option><option value="amount">Sort: Principal</option><option value="bank">Sort: Bank</option></select></div>
+      <div class="table-wrap"><table><thead><tr><th>BANK / FDR NO.</th><th>PRINCIPAL</th><th>RATE</th><th>DEPOSIT DATE</th><th>MATURITY DATE</th><th>EST. MATURITY VALUE</th><th>STATUS</th><th></th></tr></thead><tbody id="depRows"></tbody></table></div>
+    </div>
+  </div>
+
+  <div id="view-calculator" data-view-panel hidden></div>
+
+  <div id="view-reports" data-view-panel hidden>
+    <section class="cards" id="repCards"></section>
+    <div class="content-grid">
+      <div class="panel"><div class="panel-head"><h2>Principal by bank</h2><button class="button secondary" id="exportCsv" type="button">Export CSV</button></div><div id="repBanks"></div></div>
+      <div class="panel"><div class="panel-head"><h2>Status summary</h2><span class="small">All deposits</span></div><div class="table-wrap"><table><thead><tr><th>STATUS</th><th>COUNT</th><th>PRINCIPAL</th></tr></thead><tbody id="repStatus"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <div id="view-settings" data-view-panel hidden>
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-head"><h2>Profile &amp; preferences</h2></div>
+        <div class="form-grid">
+          <div class="field full"><label for="setName">Display name</label><input id="setName" maxlength="30"></div>
+          <div class="field full"><label for="setFreq">Default compounding in calculator</label><select id="setFreq"><option value="1">Yearly</option><option value="2">Half-yearly</option><option value="4">Quarterly</option><option value="12">Monthly</option></select></div>
+        </div>
+        <div class="form-actions"><button class="button" id="saveSettings" type="button">Save settings</button></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Data</h2></div>
+        <p class="calc-intro">Records are saved in this browser. You can restore the sample data or remove every record.</p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap"><button class="button secondary" id="resetData" type="button">Restore sample data</button><button class="button dark" id="clearData" type="button">Delete all records</button></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>FDR Desk • Student prototype • All values are fictional demo data</footer>
+</main>
+</div>
+<div class="modal-back" id="modalBack"><div class="modal">
+  <div class="modal-head"><h2 id="modalTitle">Add a fixed deposit</h2><button class="close" id="closeModal">×</button></div>
+  <form id="fdrForm"><div class="form-grid">
+    <div class="field"><label>Bank name</label><input name="bank" required placeholder="e.g. Bank A"></div>
+    <div class="field"><label>FDR number</label><input name="number" required placeholder="e.g. FDR-1005"></div>
+    <div class="field"><label>Principal amount (₹)</label><input name="amount" required type="number" min="1" placeholder="100000"></div>
+    <div class="field"><label>Interest rate (%)</label><input name="rate" type="number" min="0" max="30" step=".1" placeholder="6.5"></div>
+    <div class="field"><label>Deposit date</label><input name="start" required type="date"></div>
+    <div class="field"><label>Maturity date</label><input name="maturity" required type="date"></div>
+  </div><div class="form-actions"><button type="button" class="button dark" id="cancelModal">Cancel</button><button class="button" type="submit">Save FDR</button></div></form>
+</div></div>
+<div class="toast" id="toast"></div>
+<script>
+const today = new Date(); today.setHours(0,0,0,0);
+const plusDays = n => {const d=new Date(today);d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+let records=[
+ {bank:"Bank A",number:"FDR-1001",amount:500000,rate:6.5,start:"2025-10-25",maturity:plusDays(5)},
+ {bank:"Bank B",number:"FDR-1002",amount:350000,rate:6.8,start:"2025-11-15",maturity:plusDays(18)},
+ {bank:"Bank C",number:"FDR-1003",amount:250000,rate:6.2,start:"2025-08-10",maturity:plusDays(-12)},
+ {bank:"Bank D",number:"FDR-1004",amount:150000,rate:6.0,start:"2025-12-01",maturity:plusDays(70)}
+];
+const sampleJSON=JSON.stringify(records);
+const KEY="fdrdesk.records.v1",SKEY="fdrdesk.settings.v1";
+try{const st=JSON.parse(localStorage.getItem(KEY));if(Array.isArray(st))records=st}catch(e){}
+let settings={name:"Admin Demo",freq:"4"};
+try{Object.assign(settings,JSON.parse(localStorage.getItem(SKEY))||{})}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(records))}catch(e){}}
+const fmt = n => new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n);
+const shortMoney = n => n>=100000 ? "₹"+(n/100000).toFixed(1)+"L" : fmt(n);
+const niceDate = s => new Date(s+"T00:00:00").toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+function statusOf(r){const diff=Math.ceil((new Date(r.maturity+"T00:00:00")-today)/86400000);return diff<0?"Matured":diff<=30?"Upcoming":"Active"}
+function renderDashboard(){
+ const total=records.reduce((s,r)=>s+Number(r.amount),0);
+ document.getElementById("totalCount").textContent=records.length;
+ document.getElementById("totalAmount").textContent=shortMoney(total);
+ document.getElementById("soonCount").textContent=records.filter(r=>statusOf(r)==="Upcoming").length;
+ document.getElementById("maturedCount").textContent=records.filter(r=>statusOf(r)==="Matured").length;
+ const q=document.getElementById("search").value.toLowerCase(),f=document.getElementById("statusFilter").value;
+ const filtered=records.filter(r=>(r.bank+" "+r.number).toLowerCase().includes(q)&&(f==="all"||statusOf(r)===f));
+ document.getElementById("recordLabel").textContent=filtered.length+" record"+(filtered.length===1?"":"s");
+ document.getElementById("rows").innerHTML=filtered.map(r=>{const st=statusOf(r);return `<tr><td><div class="bank">${escapeHtml(r.bank)}</div><div class="subcell">${escapeHtml(r.number)}</div></td><td>${fmt(Number(r.amount))}</td><td>${niceDate(r.maturity)}</td><td><span class="pill ${st.toLowerCase()}">${st}</span></td><td><button class="button secondary" style="padding:7px 9px" onclick="removeRecord('${escapeAttr(r.number)}')">Delete</button></td></tr>`}).join("")||'<tr><td colspan="5" style="text-align:center;color:#718096;padding:24px">No matching records</td></tr>';
+ const upcoming=records.filter(r=>statusOf(r)==="Upcoming").sort((a,b)=>a.maturity.localeCompare(b.maturity));
+ document.getElementById("alerts").innerHTML=upcoming.map(r=>{const days=Math.ceil((new Date(r.maturity+"T00:00:00")-today)/86400000);return `<div class="alert"><div class="alert-icon">◷</div><div><div class="alert-title">${escapeHtml(r.bank)} · ${fmt(Number(r.amount))}</div><div class="alert-desc">${days===0?"Matures today":days+" days left"}<br>Maturity: ${niceDate(r.maturity)}</div></div></div>`}).join("")||'<div class="small">No deposits maturing in the next 30 days.</div>';
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function escapeAttr(s){return String(s).replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
+function removeRecord(num){records=records.filter(r=>r.number!==num);render();showToast("Demo record deleted")}
+function showToast(s){const t=document.getElementById("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2400)}
+const back=document.getElementById("modalBack");
+let editing=null;
+function endEdit(){editing=null;document.getElementById("modalTitle").textContent="Add a fixed deposit"}
+function open(){back.classList.add("show")}
+function close(){back.classList.remove("show");if(editing){endEdit();document.getElementById("fdrForm").reset()}}
+function openEdit(num){const r=records.find(x=>x.number===num);if(!r)return;editing=num;const f=document.getElementById("fdrForm");["bank","number","amount","rate","start","maturity"].forEach(k=>f.elements[k].value=r[k]);document.getElementById("modalTitle").textContent="Edit fixed deposit";open()}
+document.getElementById("openModal").onclick=open;document.getElementById("closeModal").onclick=close;document.getElementById("cancelModal").onclick=close;
+back.addEventListener("click",e=>{if(e.target===back)close()});
+document.getElementById("search").addEventListener("input",render);document.getElementById("statusFilter").addEventListener("change",render);
+document.getElementById("fdrForm").addEventListener("submit",e=>{e.preventDefault();const f=new FormData(e.target);if(f.get("maturity")<f.get("start")){showToast("Maturity date must be after deposit date");return}if(records.some(r=>r.number.toLowerCase()===String(f.get("number")).toLowerCase()&&r.number!==editing)){showToast("That FDR number already exists");return}const rec={bank:f.get("bank"),number:f.get("number"),amount:Number(f.get("amount")),rate:Number(f.get("rate")||0),start:f.get("start"),maturity:f.get("maturity")};const msg=editing?"FDR updated":"FDR added to this demo";if(editing){records=records.map(r=>r.number===editing?rec:r)}else{records.unshift(rec)}endEdit();e.target.reset();close();render();showToast(msg)});
+
+// Optional calculator: no pop-ups, no auto-opening, and no interruption to dashboard use.
+const calcToggle = document.getElementById("calcToggle");
+const calcBody = document.getElementById("calcBody");
+calcToggle.addEventListener("click", () => {
+  const opening = calcBody.hidden;
+  calcBody.hidden = !opening;
+  calcToggle.setAttribute("aria-expanded", String(opening));
+  document.getElementById("calcChevron").textContent = opening ? "−" : "＋";
+});
+document.querySelectorAll("#calcPrincipal,#calcRate,#calcYears,#calcFrequency").forEach(el => {
+  el.addEventListener("input", updateCalculator);
+  el.addEventListener("change", updateCalculator);
+});
+function updateCalculator() {
+  const principalRaw = document.getElementById("calcPrincipal").value.trim();
+  const rateRaw = document.getElementById("calcRate").value.trim();
+  const yearsRaw = document.getElementById("calcYears").value.trim();
+  const principal = Number(principalRaw), rate = Number(rateRaw), years = Number(yearsRaw);
+  const frequency = Number(document.getElementById("calcFrequency").value);
+  const error = document.getElementById("calcError");
+  const maturityEl = document.getElementById("calcMaturity");
+  const interestEl = document.getElementById("calcInterest");
+  error.textContent = "";
+  if (!principalRaw || !rateRaw || !yearsRaw || !Number.isFinite(principal) ||
+      !Number.isFinite(rate) || !Number.isFinite(years) || principal <= 0 ||
+      rate < 0 || rate > 100 || years <= 0 || years > 50) {
+    maturityEl.textContent = "—";
+    interestEl.textContent = "—";
+    if (principalRaw || rateRaw || yearsRaw) {
+      error.textContent = "Enter a deposit above ₹0, a rate from 0–100%, and tenure above 0 up to 50 years.";
+    }
+    return;
+  }
+  const maturity = principal * Math.pow(1 + (rate / 100) / frequency, frequency * years);
+  const interest = maturity - principal;
+  maturityEl.textContent = fmt(maturity);
+  interestEl.textContent = fmt(interest);
+}
+
+// ===== Full-project modules: navigation, All Deposits, Reports, Settings =====
+const calcPanel=document.getElementById("maturityCalculator"),dashView=document.getElementById("view-dashboard"),calcHost=document.getElementById("view-calculator");
+const views={dashboard:["WORKSPACE / OVERVIEW","Deposit Dashboard"],deposits:["WORKSPACE / DEPOSITS","All Deposits"],calculator:["WORKSPACE / CALCULATOR","Maturity Calculator"],reports:["WORKSPACE / REPORTS","Reports"],settings:["MANAGE / SETTINGS","Settings"]};
+function showView(v){
+ if(v==="maturitycalculator")v="calculator";
+ if(!views[v])v="dashboard";
+ document.querySelectorAll("[data-view-panel]").forEach(p=>p.hidden=p.id!=="view-"+v);
+ document.querySelectorAll(".nav[data-view]").forEach(n=>n.classList.toggle("active",n.dataset.view===v));
+ document.getElementById("eyebrow").textContent=views[v][0];
+ document.getElementById("pageTitle").textContent=views[v][1];
+ if(v==="calculator"){calcHost.appendChild(calcPanel);if(calcBody.hidden)calcToggle.click()}
+ else if(calcPanel.parentNode!==dashView){dashView.appendChild(calcPanel)}
+ try{history.replaceState(null,"","#"+v)}catch(e){}
+ window.scrollTo(0,0);
+}
+document.querySelectorAll(".nav[data-view]").forEach(n=>n.addEventListener("click",()=>showView(n.dataset.view)));
+
+const estValue=r=>{const yrs=Math.max(0,(new Date(r.maturity)-new Date(r.start))/31557600000);return Number(r.amount)*Math.pow(1+Number(r.rate||0)/400,4*yrs)};
+
+function renderDeposits(){
+ const q=document.getElementById("depSearch").value.toLowerCase(),f=document.getElementById("depStatus").value,so=document.getElementById("depSort").value;
+ const list=records.filter(r=>(r.bank+" "+r.number).toLowerCase().includes(q)&&(f==="all"||statusOf(r)===f))
+  .sort((a,b)=>so==="amount"?b.amount-a.amount:so==="bank"?String(a.bank).localeCompare(b.bank):a.maturity.localeCompare(b.maturity));
+ document.getElementById("depCount").textContent=list.length+" record"+(list.length===1?"":"s");
+ document.getElementById("depRows").innerHTML=list.map(r=>{const st=statusOf(r),n=escapeHtml(r.number);return `<tr><td><div class="bank">${escapeHtml(r.bank)}</div><div class="subcell">${n}</div></td><td>${fmt(Number(r.amount))}</td><td>${Number(r.rate||0).toFixed(1)}%</td><td>${niceDate(r.start)}</td><td>${niceDate(r.maturity)}</td><td>${fmt(estValue(r))}</td><td><span class="pill ${st.toLowerCase()}">${st}</span></td><td><button class="button secondary" style="padding:7px 9px" data-act="edit" data-num="${n}">Edit</button> <button class="button secondary" style="padding:7px 9px" data-act="del" data-num="${n}">Delete</button></td></tr>`}).join("")||'<tr><td colspan="8" style="text-align:center;color:#718096;padding:24px">No matching records</td></tr>';
+}
+["depSearch","depStatus","depSort"].forEach(id=>{const el=document.getElementById(id);el.addEventListener("input",renderDeposits);el.addEventListener("change",renderDeposits)});
+document.getElementById("depRows").addEventListener("click",e=>{const b=e.target.closest("button[data-act]");if(!b)return;b.dataset.act==="edit"?openEdit(b.dataset.num):removeRecord(b.dataset.num)});
+
+function renderReports(){
+ const total=records.reduce((s,r)=>s+Number(r.amount),0);
+ const interest=records.reduce((s,r)=>s+estValue(r)-Number(r.amount),0);
+ const wavg=total?records.reduce((s,r)=>s+Number(r.amount)*Number(r.rate||0),0)/total:0;
+ const next=records.filter(r=>statusOf(r)!=="Matured").sort((a,b)=>a.maturity.localeCompare(b.maturity))[0];
+ const card=(t,i,v,s)=>`<div class="card"><div class="stat-top">${t} <span class="stat-icon">${i}</span></div><div class="stat">${v}</div><div class="sub">${s}</div></div>`;
+ document.getElementById("repCards").innerHTML=card("Total principal","₹",shortMoney(total),"Across "+records.length+" FDR"+(records.length===1?"":"s"))+card("Estimated interest","＋",shortMoney(Math.round(interest)),"Quarterly compounding to maturity")+card("Average rate","％",wavg.toFixed(2)+"%","Weighted by principal")+card("Next maturity","◷",next?niceDate(next.maturity):"—",next?escapeHtml(next.bank)+" · "+escapeHtml(next.number):"No open deposits");
+ const by={};records.forEach(r=>by[r.bank]=(by[r.bank]||0)+Number(r.amount));
+ const max=Math.max(0,...Object.values(by));
+ document.getElementById("repBanks").innerHTML=Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([b,v])=>`<div class="bar-row"><span title="${escapeHtml(b)}">${escapeHtml(b)}</span><div class="bar"><i style="width:${max?Math.round(v/max*100):0}%"></i></div><b>${shortMoney(v)}</b></div>`).join("")||'<div class="small">No records yet.</div>';
+ document.getElementById("repStatus").innerHTML=["Active","Upcoming","Matured"].map(st=>{const l=records.filter(r=>statusOf(r)===st);return `<tr><td><span class="pill ${st.toLowerCase()}">${st}</span></td><td>${l.length}</td><td>${fmt(l.reduce((s,r)=>s+Number(r.amount),0))}</td></tr>`}).join("");
+}
+document.getElementById("exportCsv").addEventListener("click",()=>{
+ const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+ const rows=[["Bank","FDR number","Principal","Rate %","Deposit date","Maturity date","Status"],...records.map(r=>[r.bank,r.number,r.amount,r.rate,r.start,r.maturity,statusOf(r)])];
+ const blob=new Blob([rows.map(r=>r.map(esc).join(",")).join("\n")],{type:"text/csv"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="fdr-report.csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(a.href);showToast("Report exported");
+});
+
+function applySettings(){
+ const nm=settings.name||"Admin Demo";
+ document.getElementById("userName").textContent=nm;
+ document.getElementById("userAvatar").textContent=nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()||"AD";
+ document.getElementById("setName").value=nm;
+ document.getElementById("setFreq").value=settings.freq;
+ document.getElementById("calcFrequency").value=settings.freq;
+}
+document.getElementById("saveSettings").addEventListener("click",()=>{
+ settings.name=document.getElementById("setName").value.trim()||"Admin Demo";
+ settings.freq=document.getElementById("setFreq").value;
+ try{localStorage.setItem(SKEY,JSON.stringify(settings))}catch(e){}
+ applySettings();showToast("Settings saved");
+});
+document.getElementById("resetData").addEventListener("click",()=>{if(confirm("Replace all current records with the sample data?")){records=JSON.parse(sampleJSON);render();showToast("Sample data restored")}});
+document.getElementById("clearData").addEventListener("click",()=>{if(confirm("Delete every FDR record? This cannot be undone.")){records=[];render();showToast("All records deleted")}});
+
+function render(){renderDashboard();renderDeposits();renderReports();save()}
+applySettings();
+render();
+showView((location.hash||"").slice(1).toLowerCase());
+</script>
+</body>
+</html>
